@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="explore-header" style="max-width: 1200px; margin: 0 auto; padding: var(--space-xl) var(--space-md); text-align: center;">
+    <h1 style="font-size: 4rem; margin-bottom: var(--space-sm); font-weight: 600;">EXPLORE</h1>
+    <p style="color: var(--text-secondary); font-family: 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;">Discover the avant-garde.</p>
+</div>
+<div class="explore-bento">
+    {% for post in posts %}
+        <a href="{% url 'post_detail' post.id %}" class="bento-item reveal 
+            {% if forloop.counter|divisibleby:5 %} bento-span-2x2 
+            {% elif forloop.counter|divisibleby:3 %} bento-span-2x1 
+            {% elif forloop.counter|divisibleby:2 %} bento-span-1x2 
+            {% else %} bento-span-1x1 
+            {% endif %}">
+            <img src="{{ post.image.url }}" alt="{{ post.caption }}">
+            <div class="grid-overlay">
+                <span style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem;">@{{ post.author.username }}</span>
+            </div>
+        </a>
+    {% empty %}
+        <div class="empty-state">
+            <p>No posts to explore yet.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

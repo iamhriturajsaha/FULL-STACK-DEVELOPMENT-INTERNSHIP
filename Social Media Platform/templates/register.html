@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-split">
+    <div class="auth-image" style="background-image: url('{% static 'images/auth_hero.jpg' %}'); background-size: cover; background-position: center;">
+    </div>
+    <div class="auth-form-container">
+        <h2>Join the community.</h2>
+        <form method="post" class="premium-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <span style="color: red; font-size: 0.75rem;">{{ field.errors|striptags }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="cta-button" style="align-self: flex-start;">JOIN NOIR &rarr;</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOIR - A SPACE FOR THINGS WORTH SHARING</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="{% url 'home' %}" class="brand-logo">NOIR</a>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'home' %}">FEED</a>
+                <a href="{% url 'explore' %}">EXPLORE</a>
+                <a href="{% url 'create_post' %}">CREATE</a>
+                <button class="nav-btn" id="searchBtn" style="background:none; border:none; color:inherit; font-family:inherit; font-size:inherit; letter-spacing:inherit; cursor:pointer; text-transform:uppercase;">SEARCH</button>
+                <a href="{% url 'profile' username=user.username %}">PROFILE</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">LOGOUT</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">LOGIN</a>
+                <a href="{% url 'register' %}">JOIN</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-container">
+            <button class="close-search" id="closeSearch">&times;</button>
+            <h2>SEARCH NOIR</h2>
+            <input type="text" id="searchInput" placeholder="Find creators..." autocomplete="off">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

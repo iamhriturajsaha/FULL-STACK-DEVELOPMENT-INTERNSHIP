@@ -1,0 +1,27 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# Media
+media/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Static
+staticfiles/
+
+# Vercel
+.vercel

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feed-container">
+    <div class="feed-header">
+        <h1>Good evening, {{ user.username }}.</h1>
+        <p>Here is what your network is making.</p>
+    </div>
+
+    <div class="feed-list">
+        {% for post in posts %}
+            <article class="feed-item glass-panel reveal" style="padding: var(--space-md); border-radius: 8px; margin-bottom: var(--space-xl);">
+                <div class="post-header">
+                    {% if post.author.profile.avatar %}
+                        <img src="{{ post.author.profile.avatar.url }}" alt="" class="avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--border);"></div>
+                    {% endif %}
+                    <div class="user-meta">
+                        <span class="name">{{ post.author.profile.display_name }}</span>
+                        <span class="handle">@{{ post.author.username }}</span>
+                    </div>
+                    <div class="time">{{ post.created_at|timesince }} ago</div>
+                </div>
+                
+                <a href="{% url 'post_detail' post.id %}" class="post-image-container" style="display:block;">
+                    <img src="{{ post.image.url }}" alt="{{ post.caption }}" class="post-image">
+                </a>
+
+                <div class="post-caption" style="margin-top: var(--space-md);">
+                    <strong>@{{ post.author.username }}</strong> {{ post.caption }}
+                </div>
+                
+                {% if post.comments.count > 0 %}
+                <div class="feed-comments" style="margin-top: var(--space-sm); font-size: 0.9rem; color: var(--text-secondary);">
+                    {% with post.comments.first as first_comment %}
+                        <strong>@{{ first_comment.author.username }}</strong> {{ first_comment.content }}
+                    {% endwith %}
+                    {% if post.comments.count > 1 %}
+                        <br><a href="{% url 'post_detail' post.id %}" style="opacity: 0.6; margin-top: 5px; display: inline-block;">View all {{ post.comments.count }} comments</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="post-actions">
+                    <button class="action-btn like-btn" data-post-id="{{ post.id }}">♡ {{ post.likes.count }}</button>
+                    <a href="{% url 'post_detail' post.id %}" class="action-btn">COMMENTS {{ post.comments.count }}</a>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h2>YOUR CIRCLE IS QUIET.</h2>
+                <p>Follow a few creators to start filling your feed.</p>
+                <a href="#" class="cta-link">EXPLORE PEOPLE &rarr;</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

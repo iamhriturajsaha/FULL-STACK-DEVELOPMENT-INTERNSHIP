@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile-container">
+    <header class="profile-header">
+        <div class="profile-avatar">
+            {% if profile_user.profile.avatar %}
+                <img src="{{ profile_user.profile.avatar.url }}" alt="{{ profile_user.username }}">
+            {% else %}
+                <div class="avatar-placeholder"></div>
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h1>{{ profile_user.profile.display_name|default:profile_user.username }}</h1>
+            <p class="profile-bio">{{ profile_user.profile.bio }}</p>
+            <div class="profile-stats">
+                <span>{{ profile_user.followers.count }} FOLLOWERS</span>
+                <span>{{ profile_user.following.count }} FOLLOWING</span>
+                <span>{{ posts.count }} POSTS</span>
+            </div>
+            
+            {% if request.user == profile_user %}
+                <a href="{% url 'edit_profile' %}" class="btn-outline">EDIT PROFILE</a>
+            {% elif request.user.is_authenticated %}
+                <button class="btn-outline follow-btn" data-username="{{ profile_user.username }}">
+                    {% if is_following %}FOLLOWING ✓{% else %}FOLLOW +{% endif %}
+                </button>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="profile-grid">
+        {% for post in posts %}
+            <div class="grid-item">
+                <img src="{{ post.image.url }}" alt="{{ post.caption }}">
+                <div class="grid-overlay">
+                    <span>♡ {{ post.likes.count }}</span>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>No posts yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
