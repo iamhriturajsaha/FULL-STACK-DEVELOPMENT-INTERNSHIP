@@ -86,8 +86,9 @@ DATABASES = {
     }
 }
 
-if os.environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+db_url = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
+if db_url:
+    DATABASES['default'] = dj_database_url.config(default=db_url)
 
 
 # Password validation
