@@ -25,7 +25,7 @@ A premium, design-forward e-commerce platform offering a curated selection of li
 A minimalist social media network designed for photographers, designers and visual artists to share their work.
 
 ### Features
-*   **User Authentication -** Registration, login, and secure session management.
+*   **User Authentication -** Registration, login and secure session management.
 *   **Profiles & Following -** User profiles with avatars and bios, plus the ability to follow other creators.
 *   **Interactions -** Like and comment on posts dynamically.
 *   **Feed Generation -** View a feed of posts based on chronological order and following graphs.
@@ -43,7 +43,7 @@ cd FULL-STACK-DEVELOPMENT-INTERNSHIP
 ### 2. Create a Virtual Environment
 ```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+venv\Scripts\activate (Windows)
 ```
 
 ### 3. Install Dependencies
