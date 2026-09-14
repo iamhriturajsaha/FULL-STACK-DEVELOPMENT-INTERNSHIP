@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+{% load store_tags %}
+
+{% block navbar_class %}navbar--transparent{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero hero--dark" id="hero">
+  <div class="hero__media">
+    <!-- Moody, high-end dark interior image -->
+    <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?w=1920&q=80&auto=format"
+         alt="Moody contemporary interior with NOVA/FORM objects"
+         class="hero__image" id="hero-image" fetchpriority="high">
+    <div class="hero__overlay hero__overlay--dark"></div>
+  </div>
+
+  <div class="hero__content">
+    <h1 class="hero__title" id="hero-title">
+      <span><span class="hero__title-word">Where</span></span>
+      <span><span class="hero__title-word">Light</span></span>
+      <span><span class="hero__title-word">Meets Form</span></span>
+    </h1>
+    <p class="hero__subtitle" id="hero-subtitle">Elevate your space with objects crafted for the modern visionary. A timeless collection of striking silhouettes and luminous details.</p>
+    <div class="hero__actions">
+      <a href="{% url 'store:shop' %}" class="btn btn--white btn--lg hero__cta" id="hero-cta">Shop Now <span class="btn__arrow">→</span></a>
+    </div>
+  </div>
+
+  <!-- Enter Button (Scroll to Featured) -->
+  <a href="#featured-section" class="hero__enter" id="hero-enter" aria-label="Enter site">
+    <span class="hero__enter-text">Enter</span>
+    <div class="hero__enter-line"></div>
+  </a>
+</section>
+
+<!-- Featured Products -->
+<section class="home-featured section--lg" id="featured-section">
+  <div class="home-featured__header reveal">
+    <h2 class="home-featured__title">Featured Objects</h2>
+    <a href="{% url 'store:shop' %}" class="home-featured__link">View All <span class="btn__arrow">→</span></a>
+  </div>
+
+  <div class="editorial-grid stagger-children">
+    {% for product in featured_products %}
+    <div class="editorial-grid__item reveal">
+      <a href="{{ product.get_absolute_url }}" class="product-card" data-cursor="view">
+        <div class="product-card__image-wrapper">
+          <img src="{{ product.image }}" alt="{{ product.name }}" class="product-card__image product-card__image--primary" loading="lazy" onerror="this.style.display='none'">
+          {% if product.secondary_image %}
+          <img src="{{ product.secondary_image }}" alt="{{ product.name }} alternate view" class="product-card__image product-card__image--secondary" loading="lazy" onerror="this.style.display='none'">
+          {% endif %}
+          {% if product.new_arrival %}
+          <span class="product-card__badge">New</span>
+          {% elif product.is_on_sale %}
+          <span class="product-card__badge">Sale</span>
+          {% endif %}
+          <div class="product-card__quick-view">
+            <span class="btn btn--white">View Object <span class="btn__arrow">→</span></span>
+          </div>
+        </div>
+        <div class="product-card__info">
+          <p class="product-card__category">{{ product.category.name }}</p>
+          <h3 class="product-card__name">{{ product.name }}</h3>
+          <div class="product-card__price">
+            {% if product.is_on_sale %}
+            <span class="product-card__price--sale">${{ product.price }}</span>
+            <span class="product-card__price--compare">${{ product.compare_at_price }}</span>
+            {% else %}
+            <span>${{ product.price }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Brand Story -->
+<section class="home-story section--lg" id="story-section">
+  <div class="container">
+    <p class="home-story__text reveal">"We believe the objects you live with should be designed with the same care and intention as the spaces that hold them."</p>
+    <a href="{% url 'store:about' %}" class="home-story__link reveal">Our Story <span>→</span></a>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="home-categories reveal" id="categories-section">
+  <nav class="home-categories__list" aria-label="Product categories">
+    {% for category in categories %}
+    <a href="{{ category.get_absolute_url }}" class="home-categories__link">{{ category.name }}</a>
+    {% endfor %}
+  </nav>
+</section>
+
+<!-- New Arrivals -->
+{% if new_arrivals %}
+<section class="home-arrivals section--lg" id="arrivals-section">
+  <div class="home-featured__header reveal">
+    <h2 class="home-featured__title">New Arrivals</h2>
+    <a href="{% url 'store:shop' %}?sort=newest" class="home-featured__link">View All <span class="btn__arrow">→</span></a>
+  </div>
+
+  <div class="home-arrivals__grid stagger-children">
+    {% for product in new_arrivals %}
+    <div class="reveal">
+      <a href="{{ product.get_absolute_url }}" class="product-card" data-cursor="view">
+        <div class="product-card__image-wrapper">
+          <img src="{{ product.image }}" alt="{{ product.name }}" class="product-card__image product-card__image--primary" loading="lazy" onerror="this.style.display='none'">
+          {% if product.secondary_image %}
+          <img src="{{ product.secondary_image }}" alt="{{ product.name }} alternate view" class="product-card__image product-card__image--secondary" loading="lazy" onerror="this.style.display='none'">
+          {% endif %}
+          {% if product.new_arrival %}
+          <span class="product-card__badge">New</span>
+          {% endif %}
+        </div>
+        <div class="product-card__info">
+          <p class="product-card__category">{{ product.category.name }}</p>
+          <h3 class="product-card__name">{{ product.name }}</h3>
+          <div class="product-card__price">${{ product.price }}</div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

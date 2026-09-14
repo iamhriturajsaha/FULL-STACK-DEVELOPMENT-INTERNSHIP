@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <div class="search-page">
+      <div class="search-page__header reveal">
+        <h1 class="search-page__title">{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</h1>
+        {% if query %}
+        <p class="search-page__count">{{ product_count }} result{{ product_count|pluralize }}</p>
+        {% endif %}
+      </div>
+
+      <div class="search-page__form reveal">
+        <form action="{% url 'store:search' %}" method="get">
+          <div class="search-page__input-wrapper">
+            <input type="search" name="q" value="{{ query }}" class="search-page__input" placeholder="What are you looking for?" autocomplete="off" autofocus aria-label="Search products">
+            <button type="submit" class="btn btn--primary" style="border: none;">Search</button>
+          </div>
+        </form>
+      </div>
+
+      {% if query %}
+        {% if products %}
+        <div class="search-page__grid stagger-children">
+          {% for product in products %}
+          <div class="reveal">
+            <a href="{{ product.get_absolute_url }}" class="product-card" data-cursor="view">
+              <div class="product-card__image-wrapper">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="product-card__image product-card__image--primary" loading="lazy" onerror="this.style.display='none'">
+              </div>
+              <div class="product-card__info">
+                <p class="product-card__category">{{ product.category.name }}</p>
+                <h3 class="product-card__name">{{ product.name }}</h3>
+                <div class="product-card__price">${{ product.price }}</div>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-state__title">No results found</div>
+          <p class="empty-state__text">We couldn't find anything matching "{{ query }}". Try a different search term.</p>
+          <a href="{% url 'store:shop' %}" class="btn btn--primary">Browse All Products</a>
+        </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

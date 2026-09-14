@@ -1,0 +1,259 @@
+{% load static %}{% load store_tags %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page_title|default:"NOVA/FORM — Contemporary Objects" }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ meta_description|default:"Contemporary objects for people who appreciate design." }}{% endblock %}">
+  <meta name="author" content="NOVA/FORM">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ page_title|default:'NOVA/FORM' }}">
+  <meta property="og:description" content="{{ meta_description|default:'Contemporary objects for people who appreciate design.' }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NOVA/FORM">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+  <link rel="stylesheet" href="{% static 'css/global.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loading-screen" aria-hidden="true">
+    <div class="loading-screen__brand">NOVA/FORM</div>
+    <div class="loading-screen__bar">
+      <div class="loading-screen__progress" id="loading-progress"></div>
+    </div>
+  </div>
+
+
+  <!-- Navigation -->
+  <nav class="navbar {% block navbar_class %}navbar--solid{% endblock %}" id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar__inner">
+      <div class="navbar__logo">
+        <a href="{% url 'store:home' %}" aria-label="NOVA/FORM home">NOVA/FORM</a>
+      </div>
+
+      <div class="navbar__center">
+        <a href="{% url 'store:shop' %}" class="navbar__link {% if request.resolver_match.url_name == 'shop' %}navbar__link--active{% endif %}">Shop</a>
+        <a href="{% url 'store:shop' %}?category=lighting" class="navbar__link">Collection</a>
+        <a href="{% url 'store:about' %}" class="navbar__link {% if request.resolver_match.url_name == 'about' %}navbar__link--active{% endif %}">About</a>
+      </div>
+
+      <div class="navbar__right">
+        <div class="navbar__icons">
+          <button class="navbar__icon-btn" id="search-toggle" aria-label="Search products">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </button>
+
+          {% if user.is_authenticated %}
+          <a href="{% url 'store:account' %}" class="navbar__icon-btn" aria-label="My account">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          {% else %}
+          <a href="{% url 'store:login' %}" class="navbar__icon-btn" aria-label="Sign in">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          {% endif %}
+
+          <button class="navbar__icon-btn" id="cart-toggle" aria-label="Shopping bag">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="navbar__bag-count" id="bag-count">{{ cart_total_items }}</span>
+          </button>
+        </div>
+        <button class="navbar__menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <a href="{% url 'store:shop' %}" class="mobile-menu__link">Shop</a>
+    <a href="{% url 'store:shop' %}?category=lighting" class="mobile-menu__link">Collection</a>
+    <a href="{% url 'store:about' %}" class="mobile-menu__link">About</a>
+    <a href="{% url 'store:search' %}" class="mobile-menu__link">Search</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'store:account' %}" class="mobile-menu__link">Account</a>
+    <a href="{% url 'store:logout' %}" class="mobile-menu__link">Logout</a>
+    {% else %}
+    <a href="{% url 'store:login' %}" class="mobile-menu__link">Sign In</a>
+    {% endif %}
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="search-overlay" aria-hidden="true">
+    <button class="search-overlay__close" id="search-close" aria-label="Close search">Close</button>
+    <form action="{% url 'store:search' %}" method="get">
+      <input type="search" name="q" class="search-overlay__input" placeholder="What are you looking for?" autocomplete="off" aria-label="Search products" id="search-input">
+    </form>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping bag">
+    <div class="cart-drawer__header">
+      <span class="cart-drawer__title">Bag <span id="drawer-bag-count">({{ cart_total_items }})</span></span>
+      <button class="cart-drawer__close" id="cart-close" aria-label="Close bag">Close</button>
+    </div>
+
+    <div class="cart-drawer__items" id="cart-drawer-items">
+      {% if cart_is_empty %}
+      <div class="cart-drawer__empty">
+        <div class="cart-drawer__empty-text">Your bag is empty</div>
+        <a href="{% url 'store:shop' %}" class="btn btn--secondary">Continue Shopping</a>
+      </div>
+      {% else %}
+        {% for item in cart_items %}
+        <div class="cart-item" data-product-id="{{ item.product.id }}">
+          <img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="cart-item__image" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 3 4%22><rect fill=%22%23F2EFEB%22 width=%223%22 height=%224%22/></svg>'">
+          <div class="cart-item__details">
+            <span class="cart-item__category">{{ item.product.category.name }}</span>
+            <a href="{{ item.product.get_absolute_url }}" class="cart-item__name">{{ item.product.name }}</a>
+            <span class="cart-item__price">${{ item.product.price }}</span>
+            <div class="cart-item__actions">
+              <div class="cart-item__qty">
+                <button class="cart-item__qty-btn" data-action="decrease" data-product-id="{{ item.product.id }}" aria-label="Decrease quantity">−</button>
+                <span class="cart-item__qty-value">{{ item.quantity }}</span>
+                <button class="cart-item__qty-btn" data-action="increase" data-product-id="{{ item.product.id }}" aria-label="Increase quantity">+</button>
+              </div>
+              <button class="cart-item__remove" data-action="remove" data-product-id="{{ item.product.id }}" aria-label="Remove {{ item.product.name }}">Remove</button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if not cart_is_empty %}
+    <div class="cart-drawer__footer" id="cart-drawer-footer">
+      <div class="cart-drawer__totals">
+        <div class="cart-drawer__total-row">
+          <span>Subtotal</span>
+          <span id="drawer-subtotal">${{ cart_subtotal }}</span>
+        </div>
+        <div class="cart-drawer__total-row">
+          <span>Shipping</span>
+          <span id="drawer-shipping">{% if cart_shipping == 0 %}Complimentary{% else %}${{ cart_shipping }}{% endif %}</span>
+        </div>
+        <div class="cart-drawer__total-row cart-drawer__total-row--grand">
+          <span>Total</span>
+          <span id="drawer-total">${{ cart_total }}</span>
+        </div>
+      </div>
+      <a href="{% url 'store:checkout' %}" class="btn btn--primary btn--full">Checkout</a>
+      <a href="{% url 'store:cart' %}" class="btn btn--secondary btn--full" style="margin-top: var(--space-xs);">View Bag</a>
+    </div>
+    {% endif %}
+  </aside>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Main Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  {% block footer %}
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__cta reveal">
+        <p class="footer__cta-text">Make room<br>for better objects.</p>
+        <a href="{% url 'store:shop' %}" class="btn btn--white btn--lg">Explore Collection <span class="btn__arrow">→</span></a>
+      </div>
+
+      <div class="footer__grid">
+        <div>
+          <div class="navbar__logo" style="margin-bottom: var(--space-lg);">NOVA/FORM</div>
+          <p class="footer__brand-description">Contemporary objects for people who appreciate design. Designed with restraint. Made to endure.</p>
+          <div class="footer__newsletter">
+            <input type="email" class="footer__newsletter-input" placeholder="Your email" aria-label="Newsletter email">
+            <button class="footer__newsletter-btn" type="button">Subscribe</button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="footer__heading">Shop</h3>
+          <a href="{% url 'store:shop' %}" class="footer__link">All Products</a>
+          <a href="{% url 'store:shop' %}?category=lighting" class="footer__link">Lighting</a>
+          <a href="{% url 'store:shop' %}?category=furniture" class="footer__link">Furniture</a>
+          <a href="{% url 'store:shop' %}?category=objects" class="footer__link">Objects</a>
+          <a href="{% url 'store:shop' %}?category=accessories" class="footer__link">Accessories</a>
+        </div>
+
+        <div>
+          <h3 class="footer__heading">Company</h3>
+          <a href="{% url 'store:about' %}" class="footer__link">About</a>
+          <a href="{% url 'store:search' %}" class="footer__link">Search</a>
+          <a href="#" class="footer__link">Contact</a>
+          <a href="#" class="footer__link">Instagram</a>
+        </div>
+
+        <div>
+          <h3 class="footer__heading">Support</h3>
+          <a href="#" class="footer__link">Shipping</a>
+          <a href="#" class="footer__link">Returns</a>
+          <a href="#" class="footer__link">Terms</a>
+          <a href="#" class="footer__link">Privacy</a>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>&copy; {{ current_year }} NOVA/FORM. All rights reserved.</span>
+        <div class="footer__bottom-links">
+          <a href="#" class="footer__link">Terms</a>
+          <a href="#" class="footer__link">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <!-- CSRF Token for AJAX -->
+  <script>
+    window.NOVAFORM = {
+      csrfToken: '{{ csrf_token }}',
+      urls: {
+        cartAdd: '{% url "store:cart_add" %}',
+        cartRemove: '{% url "store:cart_remove" %}',
+        cartUpdate: '{% url "store:cart_update" %}',
+        shop: '{% url "store:shop" %}',
+        search: '{% url "store:search" %}',
+      }
+    };
+  </script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <!-- App Scripts -->
+  <script src="{% static 'js/utils.js' %}" defer></script>
+  <script src="{% static 'js/navigation.js' %}" defer></script>
+  <script src="{% static 'js/cart.js' %}" defer></script>
+  <script src="{% static 'js/animations.js' %}" defer></script>
+  <script src="{% static 'js/main.js' %}" defer></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

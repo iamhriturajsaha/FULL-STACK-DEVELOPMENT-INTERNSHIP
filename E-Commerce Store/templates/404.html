@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <div class="error-page__code reveal">404</div>
+  <h1 class="error-page__title reveal">Page Not Found</h1>
+  <p class="error-page__text reveal">The page you're looking for doesn't exist or has been moved.</p>
+  <div class="reveal">
+    <a href="{% url 'store:home' %}" class="btn btn--primary btn--lg">Return Home <span class="btn__arrow">→</span></a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <div class="account-page">
+      <div class="account-page__header reveal">
+        <h1 class="account-page__title">Account</h1>
+        <p class="account-page__greeting">Welcome back, {{ user.first_name|default:user.username }}.</p>
+      </div>
+
+      <nav class="account-page__nav reveal">
+        <span class="account-page__nav-link account-page__nav-link--active">Orders</span>
+        <a href="{% url 'store:logout' %}" class="account-page__nav-link">Sign Out</a>
+      </nav>
+
+      {% if orders %}
+      <table class="orders-table reveal">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>{{ order.order_number }}</td>
+            <td>{{ order.created_at|date:"M d, Y" }}</td>
+            <td><span class="orders-table__status">{{ order.get_status_display }}</span></td>
+            <td>${{ order.total }}</td>
+            <td><a href="{% url 'store:order_detail' order.order_number %}" class="orders-table__view link-underline">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state reveal">
+        <div class="empty-state__title">No orders yet</div>
+        <p class="empty-state__text">When you place an order, it will appear here.</p>
+        <a href="{% url 'store:shop' %}" class="btn btn--primary">Start Shopping <span class="btn__arrow">→</span></a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+  <div class="auth-page">
+    <div class="auth-card reveal">
+      <h1 class="auth-card__title">Create Account</h1>
+      <p class="auth-card__subtitle">Join NOVA/FORM for a seamless shopping experience.</p>
+
+      {% if form.errors %}
+      <div class="auth-card__errors" role="alert">
+        {% for field in form %}
+          {% for error in field.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-first-name">First Name</label>
+            <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="form-input" placeholder="First name" required id="reg-first-name" autocomplete="given-name">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-last-name">Last Name</label>
+            <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="form-input" placeholder="Last name" id="reg-last-name" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email</label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}" class="form-input" placeholder="Email address" required id="reg-email" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input type="password" name="password1" class="form-input" placeholder="Password" required id="reg-password" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password-confirm">Confirm Password</label>
+          <input type="password" name="password2" class="form-input" placeholder="Confirm password" required id="reg-password-confirm" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn--primary btn--full btn--lg">Create Account <span class="btn__arrow">→</span></button>
+      </form>
+
+      <div class="auth-card__footer">
+        <p>Already have an account? <a href="{% url 'store:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

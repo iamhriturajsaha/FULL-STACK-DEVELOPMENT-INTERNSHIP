@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+  <div class="auth-page">
+    <div class="auth-card reveal">
+      <h1 class="auth-card__title">Sign In</h1>
+      <p class="auth-card__subtitle">Welcome back to NOVA/FORM.</p>
+
+      {% if form.errors %}
+      <div class="auth-card__errors" role="alert">
+        <p>Invalid email or password. Please try again.</p>
+      </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input type="email" name="username" value="{{ form.username.value|default:'' }}" class="form-input" placeholder="Email address" required id="login-email" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" name="password" class="form-input" placeholder="Password" required id="login-password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn--primary btn--full btn--lg">Sign In <span class="btn__arrow">→</span></button>
+      </form>
+
+      <div class="auth-card__footer">
+        <p>Don't have an account? <a href="{% url 'store:register' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">Create one</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- About Hero -->
+<div class="page-content">
+  <div class="container">
+    <section class="about-hero reveal">
+      <h1 class="about-hero__title">We Design Objects<br>That Age Well</h1>
+      <p class="about-hero__subtitle">NOVA/FORM is a studio creating contemporary objects for people who appreciate design, craft, and the quiet beauty of well-considered things.</p>
+    </section>
+  </div>
+
+  <!-- Philosophy -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-section__grid">
+        <div class="reveal">
+          <p class="about-section__label">Philosophy</p>
+          <h2 class="about-section__title">Less, but better.</h2>
+          <p class="about-section__text">We believe in removing the unnecessary until only the essential remains. Every NOVA/FORM product begins with a question: what can we take away? The result is objects that feel inevitable — as though no other form could exist.</p>
+          <br>
+          <p class="about-section__text">Our design process is deliberately slow. We prototype extensively, test obsessively, and refine until each piece meets our standard: honest materials, precise proportions, and a form that improves with age.</p>
+        </div>
+        <div class="reveal">
+          <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80&auto=format" alt="NOVA/FORM studio" class="about-section__image" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Materials -->
+  <section class="about-section about-section--dark">
+    <div class="container">
+      <div class="about-section__grid">
+        <div class="reveal">
+          <img src="https://images.unsplash.com/photo-1618220179428-22790b461013?w=800&q=80&auto=format" alt="Natural materials" class="about-section__image" loading="lazy">
+        </div>
+        <div class="reveal">
+          <p class="about-section__label" style="color: var(--color-text-light-secondary);">Materials</p>
+          <h2 class="about-section__title">Honest materials,<br>honestly used.</h2>
+          <p class="about-section__text">We work with travertine, brass, oak, linen, stoneware, and other materials that develop character over time. We never disguise one material as another. What you see is what you get — and what you get only gets better.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Craftsmanship -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-section__grid">
+        <div class="reveal">
+          <p class="about-section__label">Craftsmanship</p>
+          <h2 class="about-section__title">Made by people<br>who care.</h2>
+          <p class="about-section__text">Every NOVA/FORM product is manufactured by skilled artisans and small workshops. Our ceramics are hand-formed in Kyoto. Our brass is machined in Birmingham. Our stone is cut in Tuscany. We know every maker by name.</p>
+        </div>
+        <div class="reveal">
+          <img src="https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=800&q=80&auto=format" alt="Craftsmanship" class="about-section__image" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sustainability -->
+  <section class="about-section about-section--dark" style="text-align: center;">
+    <div class="container container--md">
+      <div class="reveal">
+        <p class="about-section__label" style="color: var(--color-text-light-secondary);">Sustainability</p>
+        <h2 class="about-section__title" style="margin-left: auto; margin-right: auto;">The most sustainable product is the one you keep.</h2>
+        <p class="about-section__text" style="max-width: 600px; margin: 0 auto;">We design for longevity, not trends. Every NOVA/FORM object is built to last decades, not seasons. We use recyclable packaging, carbon-offset shipping, and partner only with manufacturers who share our commitment to responsible production.</p>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

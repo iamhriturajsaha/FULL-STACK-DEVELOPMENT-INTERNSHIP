@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <div class="order-detail">
+      <div class="order-detail__header reveal">
+        <h1 class="order-detail__title">Order {{ order.order_number }}</h1>
+        <div class="order-detail__meta">
+          <span>{{ order.created_at|date:"F d, Y" }}</span>
+          <span class="orders-table__status">{{ order.get_status_display }}</span>
+        </div>
+      </div>
+
+      <div class="order-detail__grid">
+        <div>
+          <h2 class="checkout-section__title reveal">Items</h2>
+          <div class="order-detail__items reveal">
+            {% for item in order.items.all %}
+            <div class="order-detail__item">
+              {% if item.product %}
+              <img src="{{ item.product.image }}" alt="{{ item.product_name }}" style="width: 80px; aspect-ratio: 3/4; object-fit: cover;" loading="lazy" onerror="this.style.display='none'">
+              {% else %}
+              <div style="width: 80px; aspect-ratio: 3/4; background: var(--color-bg-alt);"></div>
+              {% endif %}
+              <div>
+                <p style="font-weight: var(--weight-medium);">{{ item.product_name }}</p>
+                <p style="font-size: var(--text-sm); color: var(--color-muted); margin-top: var(--space-2xs);">Qty: {{ item.quantity }} × ${{ item.price }}</p>
+              </div>
+              <span>${{ item.subtotal }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div>
+          <div class="cart-summary reveal">
+            <h2 class="cart-summary__title">Summary</h2>
+            <div class="cart-summary__row"><span>Subtotal</span><span>${{ order.subtotal }}</span></div>
+            <div class="cart-summary__row"><span>Shipping</span><span>{% if order.shipping == 0 %}Complimentary{% else %}${{ order.shipping }}{% endif %}</span></div>
+            <div class="cart-summary__row cart-summary__row--total"><span>Total</span><span>${{ order.total }}</span></div>
+          </div>
+
+          <div class="cart-summary reveal" style="margin-top: var(--space-lg);">
+            <h2 class="cart-summary__title">Shipping Address</h2>
+            <p style="font-size: var(--text-sm); line-height: var(--leading-relaxed);">
+              {{ order.full_name }}<br>
+              {{ order.address }}<br>
+              {{ order.city }}{% if order.state %}, {{ order.state }}{% endif %} {{ order.postal_code }}<br>
+              {{ order.country }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: var(--space-2xl);">
+        <a href="{% url 'store:account' %}" class="btn btn--secondary">← Back to Orders</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

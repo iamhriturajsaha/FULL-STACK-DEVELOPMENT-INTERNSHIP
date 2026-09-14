@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <div class="order-success reveal">
+      <div class="order-success__icon">✓</div>
+      <h1 class="order-success__title">Order Confirmed</h1>
+      <p class="order-success__subtitle">Thank you for choosing NOVA/FORM. We'll send a confirmation to {{ order.email }}.</p>
+      <div class="order-success__number">{{ order.order_number }}</div>
+
+      <div class="order-success__details">
+        <h2 class="checkout-section__title">Order Details</h2>
+        {% for item in order.items.all %}
+        <div style="display: flex; justify-content: space-between; padding: var(--space-sm) 0; border-bottom: 1px solid var(--color-border);">
+          <div>
+            <span>{{ item.product_name }}</span>
+            <span class="text-muted"> × {{ item.quantity }}</span>
+          </div>
+          <span>${{ item.subtotal }}</span>
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: var(--space-lg);">
+          <div class="cart-summary__row"><span>Subtotal</span><span>${{ order.subtotal }}</span></div>
+          <div class="cart-summary__row"><span>Shipping</span><span>{% if order.shipping == 0 %}Complimentary{% else %}${{ order.shipping }}{% endif %}</span></div>
+          <div class="cart-summary__row cart-summary__row--total"><span>Total</span><span>${{ order.total }}</span></div>
+        </div>
+
+        <div style="margin-top: var(--space-2xl); display: flex; gap: var(--space-md); justify-content: center;">
+          <a href="{% url 'store:account' %}" class="btn btn--primary">View Orders</a>
+          <a href="{% url 'store:shop' %}" class="btn btn--secondary">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

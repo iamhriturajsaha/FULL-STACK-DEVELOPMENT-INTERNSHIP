@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <!-- Header -->
+    <div class="shop-header reveal">
+      <h1 class="shop-header__title">{% if active_category %}{{ active_category.name }}{% else %}Shop{% endif %}</h1>
+      <p class="shop-header__subtitle">{% if active_category %}{{ active_category.description }}{% else %}Objects designed for the everyday.{% endif %}</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="shop-filters reveal">
+      <nav class="shop-filters__categories" aria-label="Filter by category">
+        <a href="{% url 'store:shop' %}" class="shop-filters__cat-link {% if not active_category %}shop-filters__cat-link--active{% endif %}">All</a>
+        {% for cat in categories %}
+        <a href="{% url 'store:shop' %}?category={{ cat.slug }}{% if current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}"
+           class="shop-filters__cat-link {% if active_category and active_category.slug == cat.slug %}shop-filters__cat-link--active{% endif %}">{{ cat.name }}</a>
+        {% endfor %}
+      </nav>
+
+      <div class="shop-filters__right">
+        <span class="shop-filters__count">{{ product_count }} product{{ product_count|pluralize }}</span>
+        <select class="shop-filters__sort" id="shop-sort" aria-label="Sort products">
+          <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest</option>
+          <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+          <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    {% if products %}
+    <div class="shop-grid stagger-children">
+      {% for product in products %}
+      <div class="product-card reveal" data-cursor="view">
+        <a href="{{ product.get_absolute_url }}">
+          <div class="product-card__image-wrapper">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-card__image product-card__image--primary" loading="lazy" onerror="this.style.display='none'">
+            {% if product.secondary_image %}
+            <img src="{{ product.secondary_image }}" alt="{{ product.name }} alternate view" class="product-card__image product-card__image--secondary" loading="lazy" onerror="this.style.display='none'">
+            {% endif %}
+            {% if product.new_arrival %}
+            <span class="product-card__badge">New</span>
+            {% elif product.is_on_sale %}
+            <span class="product-card__badge">Sale</span>
+            {% endif %}
+            <div class="product-card__quick-view">
+              <span class="btn btn--white">View Object <span class="btn__arrow">→</span></span>
+            </div>
+          </div>
+          <div class="product-card__info">
+            <p class="product-card__category">{{ product.category.name }}</p>
+            <h3 class="product-card__name">{{ product.name }}</h3>
+            <div class="product-card__price">
+              {% if product.is_on_sale %}
+              <span class="product-card__price--sale">${{ product.price }}</span>
+              <span class="product-card__price--compare">${{ product.compare_at_price }}</span>
+              {% else %}
+              <span>${{ product.price }}</span>
+              {% endif %}
+            </div>
+            {% if not product.is_in_stock %}
+            <p class="product-card__stock">Out of stock</p>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state__title">No products found</div>
+      <p class="empty-state__text">Try adjusting your filters or browse our full collection.</p>
+      <a href="{% url 'store:shop' %}" class="btn btn--primary">View All Products</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sortSelect = document.getElementById('shop-sort');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const url = new URL(window.location);
+      url.searchParams.set('sort', this.value);
+      window.location = url.toString();
+    });
+  }
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <div class="cart-page">
+      <div class="cart-page__header reveal">
+        <h1 class="cart-page__title">Your Bag</h1>
+        <p class="cart-page__count">{% if not is_empty %}{{ cart_total_items }} item{{ cart_total_items|pluralize }}{% endif %}</p>
+      </div>
+
+      {% if is_empty %}
+      <div class="empty-state">
+        <div class="empty-state__title">Your bag is empty</div>
+        <p class="empty-state__text">Looks like you haven't added anything yet. Browse our collection to find something you'll love.</p>
+        <a href="{% url 'store:shop' %}" class="btn btn--primary">Continue Shopping <span class="btn__arrow">→</span></a>
+      </div>
+      {% else %}
+      <div class="cart-page__grid">
+        <div class="cart-page__items">
+          {% for item in cart_items_list %}
+          <div class="cart-page-item" data-product-id="{{ item.product.id }}">
+            <img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="cart-page-item__image" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder')">
+            <div>
+              <h3 class="cart-page-item__name">
+                <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
+              </h3>
+              <p class="cart-page-item__category">{{ item.product.category.name }}</p>
+              <div class="cart-item__qty" style="margin-top: var(--space-md);">
+                <form method="post" action="{% url 'store:cart_update' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                  <input type="hidden" name="quantity" value="{{ item.quantity|add:-1 }}">
+                  <button type="submit" class="cart-item__qty-btn" aria-label="Decrease quantity">−</button>
+                </form>
+                <span class="cart-item__qty-value">{{ item.quantity }}</span>
+                <form method="post" action="{% url 'store:cart_update' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                  <input type="hidden" name="quantity" value="{{ item.quantity|add:1 }}">
+                  <button type="submit" class="cart-item__qty-btn" aria-label="Increase quantity">+</button>
+                </form>
+              </div>
+            </div>
+            <div class="cart-page-item__right">
+              <span class="cart-page-item__price">${{ item.line_total }}</span>
+              <form method="post" action="{% url 'store:cart_remove' %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <button type="submit" class="cart-item__remove">Remove</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+          <h2 class="cart-summary__title">Order Summary</h2>
+          <div class="cart-summary__row">
+            <span>Subtotal</span>
+            <span>${{ subtotal }}</span>
+          </div>
+          <div class="cart-summary__row">
+            <span>Shipping</span>
+            <span>{% if shipping == 0 %}Complimentary{% else %}${{ shipping }}{% endif %}</span>
+          </div>
+          <div class="cart-summary__row cart-summary__row--total">
+            <span>Total</span>
+            <span>${{ total }}</span>
+          </div>
+          {% if shipping == 0 %}
+          <p class="cart-summary__free-shipping">✓ You qualify for free shipping</p>
+          {% endif %}
+          <a href="{% url 'store:checkout' %}" class="btn btn--primary btn--full btn--lg">Checkout <span class="btn__arrow">→</span></a>
+          <p class="cart-summary__note">Taxes calculated at checkout.</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

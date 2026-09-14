@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load store_tags %}
+
+{% block content %}
+<div class="page-content">
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="{% url 'store:home' %}">Home</a>
+      <span class="breadcrumbs__separator">/</span>
+      <a href="{% url 'store:shop' %}">Shop</a>
+      {% if product.category %}
+      <span class="breadcrumbs__separator">/</span>
+      <a href="{% url 'store:shop' %}?category={{ product.category.slug }}">{{ product.category.name }}</a>
+      {% endif %}
+      <span class="breadcrumbs__separator">/</span>
+      <span>{{ product.name }}</span>
+    </nav>
+
+    <!-- Product Page -->
+    <div class="product-page">
+      <div class="product-page__grid">
+        <!-- Gallery -->
+        <div class="product-gallery reveal" id="product-gallery">
+          <div class="product-gallery__main">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-gallery__main-image" id="main-product-image" onerror="this.parentElement.classList.add('img-placeholder')">
+          </div>
+          <div class="product-gallery__thumbs">
+            <button class="product-gallery__thumb is-active" data-image="{{ product.image }}" aria-label="View primary image">
+              <img src="{{ product.image }}" alt="{{ product.name }} thumbnail" onerror="this.style.display='none'">
+            </button>
+            {% if product.secondary_image %}
+            <button class="product-gallery__thumb" data-image="{{ product.secondary_image }}" aria-label="View secondary image">
+              <img src="{{ product.secondary_image }}" alt="{{ product.name }} alternate thumbnail" onerror="this.style.display='none'">
+            </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info reveal">
+          {% if product.category %}
+          <p class="product-info__category">{{ product.category.name }}</p>
+          {% endif %}
+
+          <h1 class="product-info__name">{{ product.name }}</h1>
+
+          <div class="product-info__price">
+            {% if product.is_on_sale %}
+            <span class="product-info__price--sale">${{ product.price }}</span>
+            <span class="product-info__price--compare">${{ product.compare_at_price }}</span>
+            {% else %}
+            <span>${{ product.price }}</span>
+            {% endif %}
+          </div>
+
+          <p class="product-info__description">{{ product.short_description }}</p>
+
+          <div class="product-info__stock">
+            {% if product.is_in_stock %}
+            <span class="product-info__stock-dot"></span>
+            <span>In stock — {{ product.stock_quantity }} available</span>
+            {% else %}
+            <span class="product-info__stock-dot product-info__stock-dot--out"></span>
+            <span>Out of stock</span>
+            {% endif %}
+          </div>
+
+          {% if product.is_in_stock %}
+          <div class="product-info__actions" id="product-actions">
+            <form class="product-info__add-form" id="add-to-cart-form" data-product-id="{{ product.id }}">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <div class="qty-selector">
+                <button type="button" class="qty-selector__btn" id="qty-decrease" aria-label="Decrease quantity">−</button>
+                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" class="qty-selector__value" id="qty-input" aria-label="Quantity">
+                <button type="button" class="qty-selector__btn" id="qty-increase" aria-label="Increase quantity">+</button>
+              </div>
+              <button type="submit" class="btn btn--primary btn--add-to-cart" id="add-to-cart-btn">
+                Add to Bag
+              </button>
+            </form>
+          </div>
+          {% else %}
+          <div class="product-info__actions">
+            <button class="btn btn--secondary" disabled>Out of Stock</button>
+          </div>
+          {% endif %}
+
+          <!-- Product Details Accordion -->
+          <div class="product-details">
+            <div class="product-details__item is-open">
+              <button class="product-details__toggle" aria-expanded="true">
+                <span>Description</span>
+                <span class="product-details__toggle-icon">+</span>
+              </button>
+              <div class="product-details__content" style="max-height: 500px;">
+                <div class="product-details__content-inner">
+                  {{ product.description|linebreaksbr }}
+                </div>
+              </div>
+            </div>
+
+            <div class="product-details__item">
+              <button class="product-details__toggle" aria-expanded="false">
+                <span>Shipping & Returns</span>
+                <span class="product-details__toggle-icon">+</span>
+              </button>
+              <div class="product-details__content">
+                <div class="product-details__content-inner">
+                  <p>Complimentary shipping on orders over $150. Standard delivery takes 5–7 business days. Express delivery available at checkout.</p>
+                  <br>
+                  <p>We accept returns within 30 days of delivery. Items must be unused and in original packaging. Return shipping is complimentary within the US.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="product-details__item">
+              <button class="product-details__toggle" aria-expanded="false">
+                <span>Care</span>
+                <span class="product-details__toggle-icon">+</span>
+              </button>
+              <div class="product-details__content">
+                <div class="product-details__content-inner">
+                  <p>Each NOVA/FORM product is designed to age beautifully with proper care. Specific care instructions vary by material — please refer to the product description for detailed guidance.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="related-products">
+      <div class="related-products__header reveal">
+        <h2 class="related-products__title">You May Also Like</h2>
+      </div>
+      <div class="related-products__grid stagger-children">
+        {% for product in related_products %}
+        <div class="reveal">
+          <a href="{{ product.get_absolute_url }}" class="product-card" data-cursor="view">
+            <div class="product-card__image-wrapper">
+              <img src="{{ product.image }}" alt="{{ product.name }}" class="product-card__image product-card__image--primary" loading="lazy" onerror="this.style.display='none'">
+            </div>
+            <div class="product-card__info">
+              <p class="product-card__category">{{ product.category.name }}</p>
+              <h3 class="product-card__name">{{ product.name }}</h3>
+              <div class="product-card__price">${{ product.price }}</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/product.js' %}" defer></script>
+{% endblock %}
+
