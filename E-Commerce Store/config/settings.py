@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,8 +72,9 @@ DATABASES = {
 }
 
 # To use PostgreSQL in production, set DATABASE_URL env var and uncomment:
-# import dj_database_url
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+import dj_database_url
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

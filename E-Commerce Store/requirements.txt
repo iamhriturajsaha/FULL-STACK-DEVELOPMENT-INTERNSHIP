@@ -3,3 +3,5 @@ Pillow>=10.0
 python-dotenv>=1.0
 gunicorn>=22.0
 psycopg2-binary>=2.9
+whitenoise>=6.0
+dj-database-url>=2.0
